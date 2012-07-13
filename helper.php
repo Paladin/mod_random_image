@@ -9,7 +9,7 @@
 // no direct access
 defined('_JEXEC') or die;
 
-class modRandomImageHelper
+class modRandomImageHelper extends JModuleHelper
 {
 	/**
 	 * @var	width	integer	Number of pixels for image width
@@ -181,7 +181,7 @@ class modRandomImageHelper
 			echo JText::_('MOD_RANDOM_IMAGE_NO_IMAGES');
 		} else {
 			$image = $this->getRandomImage($images);
-			require JModuleHelper::getLayoutPath('mod_random_image', $this->layout);
+			require $this->getLayoutPath('mod_random_image', $this->layout);
 		}
 	}
 }
