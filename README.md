@@ -12,13 +12,17 @@ If you want CSS to completely control your image sizing, you're pretty much out 
 Also, it's pretty much hostile to the idea of any sort of responsive design, something which should be fixed as well.
 
 ## How does it work?
-I've "hijacked" the JModuleHelper class for it, but there's no reason it couldn't eventually be a JModuleClass. The idea behind it can be carried into a future approach to handling modules.
+I've "hijacked" the JModuleHelper class for it, but there's no reason it couldn't eventually be a JModuleClass. Or, for that matter, no reason it has to be *any* class tree, so long as it implements a specific interface. The idea behind it can be carried into a future approach to handling modules.
 
 Traditionally, the system executes a code fragment located in a file named for the module (_module.php_) which starts the execution. This file has been the collecting point for lots of procedural code, when a future version could simply instantiate the module object and tell it to create its output.
 
 All module code then becomes encapsulated into its own object, lessening chances for side effects and other symptoms of tight coupling.
 
-A side benefit is it increases the unit testability of the module itself, as the instantiation code for the module object can have everything it needs for further execution injected into it. That means the test can easily preload test data into it, and mock objects for it to reference.
+A side benefit is this increases the unit testability of the module itself, as the instantiation code for the module object can have everything it needs for further execution injected into it. This injection is the basis for increased testability. It means the test can easily preload test data into it, and mock objects for it to reference. It decreases the dependency of the module code on the actual Joomla code, and anything that breaks dependencies improves testability, and eventually, reliability.
+
+The premise is made clear by looking at the helper.php code: The object is instantiated by passing it the 'params' object. In 'normal' operation, this is a JRegistry object with the parameters for the module in it. But we can use *any* object that behaves like JRegistry. Hence, by passing in a test object, or a mock, we can break any dependency the code has on the rest of the Joomla system, making the tests run faster, and more isolated from any side effects. We can also use that to set up specific tests with a specific set of parameters, allowing us to much more easily duplicate an error from the field, and an automated acceptance test can feed in a complete range of parameters for full-range testing.
+
+The unfortunate reliance on static calls into JHTML, JString, and JText means we haven't completely broken the dependencies, but we've made a good start. There's actually a completely useful and simple way to cover that dependency, as well. Coming Soon.
 
 ## When will it happen?
 Dunno. Let's find out first if I've managed to think this through properly, then we'll worry about when. This is an early "proof-of-concept" pass at it. It'll get fleshed out with comments/suggestions received, and tests (of **course** there will be tests, that's part of the point, here, after all).
