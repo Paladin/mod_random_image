@@ -61,7 +61,7 @@ class modRandomImageHelper extends JModuleHelper
 		$this->width			= $params->get('width');
 		$this->height			= $params->get('height');
 		$this->link				= $params->get('link');
-		$this->folder			= $this->getFolder($params);
+		$this->folder			= static::getFolder($params);
 		$this->type				= $params->get('type', 'jpg');
 		$this->moduleclass_sfx	= htmlspecialchars($params->get('moduleclass_sfx'));
 		$this->layout			= $params->get('layout', 'default');
@@ -140,7 +140,7 @@ class modRandomImageHelper extends JModuleHelper
 		return $images;
 	}
 
-	public function getFolder(&$params)
+	static function getFolder(&$params)
 	{
 		$folder	= $params->get('folder');
 
