@@ -9,42 +9,12 @@
 // no direct access
 defined('_JEXEC') or die;
 
-class modRandomImageHelper extends JModuleHelper
+class modRandomImageHelper
 {
 	/**
-	 * @var	width	integer	Number of pixels for image width
+	 * @var	params	the params array for the module
 	 */
 	protected $width;
-	
-	/**
-	 * @var	height	integer	Number of pixels for image height
-	 */
-	protected $height;
-	
-	/**
-	 * @var	link	string	URL image should link to
-	 */
-	protected $link;
-	
-	/**
-	 * @var	folder	string	path to image folder
-	 */
-	protected $folder;
-	
-	/**
-	 * @var	type	string	image type suffix (jpg/png/etc.)
-	 */
-	protected $type;
-	
-	/**
-	 * @var	moduleclass_sfx	string	Module Class suffix
-	 */
-	protected $moduleclass_sfx;
-	
-	/**
-	 * @var	layout	string	Name of layout to use for output
-	 */
-	protected $layout;
 	
 	/**
 	 *
@@ -58,14 +28,8 @@ class modRandomImageHelper extends JModuleHelper
 	 */
 	public function __construct( $params )
 	{
-		$this->width			= $params->get('width');
-		$this->height			= $params->get('height');
-		$this->link				= $params->get('link');
-		$this->folder			= static::getFolder($params);
-		$this->type				= $params->get('type', 'jpg');
-		$this->moduleclass_sfx	= htmlspecialchars($params->get('moduleclass_sfx'));
-		$this->layout			= $params->get('layout', 'default');
-}
+		$this->params = $params;
+	}
 	
 	public function getRandomImage($images)
 	{
