@@ -68,12 +68,13 @@ class modRandomImageHelper
 		return $image;
 	}
 
-	public function getImages()
+	static function getImages($theFolder, $type)
 	{
+		$folder = static::getFolder($theFolder);
 		$files	= array();
 		$images	= array();
 
-		$dir = JPATH_BASE . '/' . $this->folder;
+		$dir = JPATH_BASE . '/' . $folder;
 
 		// check if directory exists
 		if (is_dir($dir))
@@ -92,11 +93,11 @@ class modRandomImageHelper
 			{
 				if (!is_dir($dir . '/' . $img))
 				{
-					if (preg_match('/'.$this->type.'/', $img)) {
+					if (preg_match('/'.$type.'/', $img)) {
 						$images[$i] = new stdClass;
 
 						$images[$i]->name	= $img;
-						$images[$i]->folder	= $this->folder;
+						$images[$i]->folder	= $folder;
 						$i++;
 					}
 				}
@@ -106,9 +107,9 @@ class modRandomImageHelper
 		return $images;
 	}
 
-	static function getFolder(&$params)
-	{
-		$folder	= $params->get('folder');
+	static function getFolder($theFolder)
+	{ 
+		$folder	= $theFolder;
 
 		$LiveSite	= JURI::base();
 

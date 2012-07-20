@@ -95,5 +95,23 @@ class modRandomImageHelperTest extends PHPUnit_Framework_TestCase
 		$this->assertContains( (int)$image->width, $expectedWidths, "Incorrect Width");
 		$this->assertContains( (int)$image->height, $expectedHeights, "Incorrect Height");
 	}
+	/**
+	 *	testGetImage
+	 */
+	public function testGetImages()
+	{
+    	$mockMe = $this->getMockClass('modRandomImageHelper', array('getFolder'));
+    	$mockMe::staticExpects($this->any())
+    		->method('getFolder')
+    		->with($this->equalTo($this->folder))
+    		->will($this->returnValue($this->folder));
+
+   		$images = $mockMe::getImages($this->folder, $this->params->params['type'] = 'jpg');
+   		
+   		$this->assertEquals($images, array(
+   			(object)array("name" => 'EQ.jpg', "folder" => 'images'),
+   			(object)array("name" => 'hobok.jpg', "folder" => 'images'),
+   		));
+	}
 }
 ?>
