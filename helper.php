@@ -33,34 +33,36 @@ class modRandomImageHelper
 	
 	public function getRandomImage($images)
 	{
+		$width	= $this->params->get('width');
+		$height	= $this->params->get('height');
 		$i			= count($images);
 		$random		= mt_rand(0, $i - 1);
 		$image		= $images[$random];
-		$size		= getimagesize (JPATH_BASE . '/' . $image->folder . '/' . $image->name);
+		$size		= getimagesize(JPATH_BASE . '/' . $image->folder . '/' . $image->name);
 
 
-		if ($this->width == '') {
-			$this->width = 100;
+		if ($width == '') {
+			$width = 100;
 		}
 
-		if ($size[0] < $this->width) {
-			$this->width = $size[0];
+		if ($size[0] < $width) {
+			$width = $size[0];
 		}
 
 		$coeff = $size[0]/$size[1];
-		if ($this->height == '') {
-			$this->height = (int) ($this->width/$coeff);
+		if ($height == '') {
+			$height = (int) ($width/$coeff);
 		} else {
-			$newheight = min ($this->height, (int) ($this->width/$coeff));
-			if ($newheight < $this->height) {
-				$this->height = $newheight;
+			$newheight = min ($height, (int) ($width/$coeff));
+			if ($newheight < $height) {
+				$height = $newheight;
 			} else {
-				$this->width = $this->height * $coeff;
+				$width = $height * $coeff;
 			}
 		}
 
-		$image->width	= $this->width;
-		$image->height	= $this->height;
+		$image->width	= $width;
+		$image->height	= $height;
 		$image->folder	= str_replace('\\', '/', $image->folder);
 
 		return $image;

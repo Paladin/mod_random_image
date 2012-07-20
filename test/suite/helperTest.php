@@ -54,5 +54,46 @@ class modRandomImageHelperTest extends PHPUnit_Framework_TestCase
     {
 		$this->assertAttributeEquals($this->params, 'params', $this->module);
 	}
+	/**
+	 *	casesRandomImage
+	 *
+	 *	Provides test cases for getRandomImage
+	 */
+	public function casesRandomImage()
+	{
+		return array(
+			array( null, null, array(100,100), array(61,73) ),
+			array( null, 200, array(100,100), array(61,73) ),
+			array( null, 400, array(100,100), array(61,73) ),
+			array( 400, null, array(400,400), array(246,292) ),
+			array( 400, 200, array(273,324), array(200,200) ),
+			array( 400, 400, array(400,400), array(246,292) ),
+			array( 800, null, array(416,450), array(304,277) ),
+			array( 800, 200, array(273,324), array(200,200) ),
+			array( 800, 400, array(416,450), array(304,277) ),
+		);
+	}
+	/**
+	 *	testGetRandomImage
+	 *
+	 * @dataProvider casesRandomImage
+	 */
+	public function testGetRandomImage($testWidth, $testHeight, 
+		$expectedWidths, $expectedHeights)
+	{
+		$this->params->params['width'] = $testWidth;
+		$this->params->params['height'] = $testHeight;
+	    $myImages = array(
+   			(object)array("name" => 'EQ.jpg', "folder" => 'images', 
+   				'width' => 416, 'height' => 304),
+   			(object)array("name" => 'hobok.jpg', "folder" => 'images', 
+   				'width' => 450, 'height' => 277),
+   		);
+		$image = $this->module->getRandomImage($myImages);
+
+		$this->assertContains( $image, $myImages); /* tests for object in array sent */
+		$this->assertContains( (int)$image->width, $expectedWidths, "Incorrect Width");
+		$this->assertContains( (int)$image->height, $expectedHeights, "Incorrect Height");
+	}
 }
 ?>
