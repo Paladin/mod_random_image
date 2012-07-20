@@ -14,7 +14,7 @@ class modRandomImageHelper
 	/**
 	 * @var	params	the params array for the module
 	 */
-	protected $width;
+	protected $params;
 	
 	/**
 	 *
@@ -128,7 +128,7 @@ class modRandomImageHelper
 	}
 	/**
 	 *
-	 * creasteOutput.
+	 * createOutput.
 	 *
 	 * This method outputs through the selected template the results of the
 	 * module.
@@ -139,16 +139,18 @@ class modRandomImageHelper
 	 */
 	public function createOutput()
 	{
- 		$link	= $this->link;
-		$moduleclass_sfx = $this->moduleclass_sfx;
+ 		$link	= $this->params->get('link');
+		$moduleclass_sfx = $this->params->get('moduleclass_sfx');
 
-		$images	= $this->getImages();
+		$images	= static::getImages($this->params->get('folder'),
+			$this->params->get('type', 'jpg')
+		);
 
 		if (!count($images)) {
 			echo JText::_('MOD_RANDOM_IMAGE_NO_IMAGES');
 		} else {
 			$image = $this->getRandomImage($images);
-			require $this->getLayoutPath('mod_random_image', $this->layout);
+			require JModuleHelper::getLayoutPath('mod_random_image', $this->params->get('layout'));
 		}
 	}
 }
