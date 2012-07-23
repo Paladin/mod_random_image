@@ -26,10 +26,14 @@ class modRandomImageHelperTest extends PHPUnit_Framework_TestCase
 	 * @var	params	the mocked params array for the module
 	 */
     protected $params;
+    /**
+     * @var mock_glue	The mock object for the CMS glue
+     */
+    protected $mock_glue;
 	/**
 	 *	setUp
 	 *
-	 *	Creates the module under test and loads the mockParams object into it
+	 *	Creates the module under test and loads the mock objects into it
 	 */
     protected function setUp()
     {
@@ -43,7 +47,10 @@ class modRandomImageHelperTest extends PHPUnit_Framework_TestCase
 		$this->params->params['moduleclass_sfx'] = null;
 		$this->params->params['layout'] = null;
 
-    	$this->module = new modRandomImageHelper($this->params);
+    	$this->mock_glue = $this->getMock('JoomlaGlue', array('getBaseUrl', 'strpos'));
+    	
+    	$this->module = new modRandomImageHelper($this->params, $this->mock_glue);
+    	
     }
 	/**
 	 *	testCreatedModule
@@ -100,18 +107,27 @@ class modRandomImageHelperTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testGetImages()
 	{
-    	$mockMe = $this->getMockClass('modRandomImageHelper', array('getFolder'));
-    	$mockMe::staticExpects($this->any())
-    		->method('getFolder')
-    		->with($this->equalTo($this->folder))
-    		->will($this->returnValue($this->folder));
-
-   		$images = $mockMe::getImages($this->folder, $this->params->params['type'] = 'jpg');
+   		$images = $this->module->getImages($this->folder, $this->params->params['type'] = 'jpg');
    		
    		$this->assertEquals($images, array(
    			(object)array("name" => 'EQ.jpg', "folder" => 'images'),
    			(object)array("name" => 'hobok.jpg', "folder" => 'images'),
    		));
+	}
+	/**
+	 *	testGetFolder
+	 */
+	public function testGetFolder()
+	{
+		$this->mock_glue->expects($this->once())
+						->method('getBaseURL')
+						->will($this->returnValue('http://www.testingsite.com'));
+		$this->mock_glue->expects($this->exactly(2))
+						->method('strpos')
+						->will($this->returnValue($this->folder));
+						
+		$actual = $this->module->getFolder($this->folder);
+		$this->assertEquals($actual, $this->folder);
 	}
 }
 ?>

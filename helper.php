@@ -17,18 +17,25 @@ class modRandomImageHelper
 	protected $params;
 	
 	/**
+	 * @var	cms	the glue object for talking to the cms
+	 */
+	protected $cms;
+	
+	/**
 	 *
 	 * Constructor.
 	 *
-	 * @param	JRegistry	params
+	 * @param	params	JRegistry		params
+	 * @param	cms		CMS Glue object	glue for cms API
 	 *
 	 * @return	modRandomImageHelper object
 	 *
 	 * @since Unspecified Possible Future Version
 	 */
-	public function __construct( $params )
+	public function __construct( $params, $cms )
 	{
 		$this->params = $params;
+		$this->cms = $cms;
 	}
 	
 	public function getRandomImage($images)
@@ -68,9 +75,9 @@ class modRandomImageHelper
 		return $image;
 	}
 
-	static function getImages($theFolder, $type)
+	public function getImages($theFolder, $type)
 	{
-		$folder = static::getFolder($theFolder);
+		$folder = $this->getFolder($theFolder);
 		$files	= array();
 		$images	= array();
 
@@ -107,18 +114,18 @@ class modRandomImageHelper
 		return $images;
 	}
 
-	static function getFolder($theFolder)
+	public function getFolder($theFolder)
 	{ 
 		$folder	= $theFolder;
 
-		$LiveSite	= JURI::base();
+		$LiveSite	= $this->cms->getBaseURL();
 
 		// if folder includes livesite info, remove
-		if (JString::strpos($folder, $LiveSite) === 0) {
+		if ($this->cms->strpos($folder, $LiveSite) === 0) {
 			$folder = str_replace($LiveSite, '', $folder);
 		}
 		// if folder includes absolute path, remove
-		if (JString::strpos($folder, JPATH_SITE) === 0) {
+		if ($this->cms->strpos($folder, JPATH_SITE) === 0) {
 			$folder= str_replace(JPATH_BASE, '', $folder);
 		}
 		$folder = str_replace('\\', DIRECTORY_SEPARATOR, $folder);
@@ -142,7 +149,7 @@ class modRandomImageHelper
  		$link	= $this->params->get('link');
 		$moduleclass_sfx = $this->params->get('moduleclass_sfx');
 
-		$images	= static::getImages($this->params->get('folder'),
+		$images	= $this->getImages($this->params->get('folder'),
 			$this->params->get('type', 'jpg')
 		);
 
