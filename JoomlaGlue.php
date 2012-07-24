@@ -42,4 +42,34 @@ class JoomlaGlue
 	{
 		return JString::strpos($needle, $haystack, $offset);
 	}
+	/**
+	 *	getTranslatedText
+	 *
+	 *	Gets the text string in the current language
+	 *
+	 * @param   string   $string                The string to translate.
+	 * @param   mixed    $jsSafe                Boolean: Make the result javascript safe.
+	 * @param   boolean  $interpretBackSlashes  To interpret backslashes (\\=\, \n=carriage return, \t=tabulation)
+	 * @param   boolean  $script                To indicate that the string will be push in the javascript language store
+	 *
+	 * @return  string  The translated string or the key is $script is true
+	 */
+	public function getTranslatedText($string, $jsSafe = false, 
+		$interpretBackSlashes = true, $script = false)
+	{
+		return JText::_($string, $jsSafe, $interpretBackSlashes, $script);
+	}
+	/**
+	 *	getLayoutPath
+	 *
+	 *	Gets the text string in the current language
+	 *
+	 * @param   string   $layout	The layout name to find.
+	 *
+	 * @return  string  The path to the layout file.
+	 */
+	public function getLayoutPath($layout)
+	{
+		return JModuleHelper::getLayoutPath('mod_random_image', $layout);
+	}
 }

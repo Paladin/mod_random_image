@@ -154,10 +154,10 @@ class modRandomImageHelper
 		);
 
 		if (!count($images)) {
-			echo JText::_('MOD_RANDOM_IMAGE_NO_IMAGES');
+			echo $this->cms->getTranslatedText('MOD_RANDOM_IMAGE_NO_IMAGES');
 		} else {
 			$image = $this->getRandomImage($images);
-			require JModuleHelper::getLayoutPath('mod_random_image', $this->params->get('layout'));
+			require $this->cms->getLayoutPath($this->params->get('layout'));
 		}
 	}
 }

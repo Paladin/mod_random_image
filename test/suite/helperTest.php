@@ -47,10 +47,15 @@ class modRandomImageHelperTest extends PHPUnit_Framework_TestCase
 		$this->params->params['moduleclass_sfx'] = null;
 		$this->params->params['layout'] = null;
 
-    	$this->mock_glue = $this->getMock('JoomlaGlue', array('getBaseUrl', 'strpos'));
+    	$this->mock_glue = $this->getMock('JoomlaGlue',
+    										array('getBaseUrl',
+													'strpos',
+													'getTranslatedText',
+													'getLayoutPath',
+													'sendHTML')
+			);
     	
     	$this->module = new modRandomImageHelper($this->params, $this->mock_glue);
-    	
     }
 	/**
 	 *	testCreatedModule
@@ -128,6 +133,32 @@ class modRandomImageHelperTest extends PHPUnit_Framework_TestCase
 						
 		$actual = $this->module->getFolder($this->folder);
 		$this->assertEquals($actual, $this->folder);
+	}
+	/**
+	 *	testCreateOutput
+	 */
+	public function testCreateOutput()
+	{
+		$image = '<img src="/images/test.jpg" alt="test.jpg">';
+		$this->mock_glue->expects($this->any())
+						->method('getTranslatedText')
+						->will($this->returnValue('No Images'));
+		$this->mock_glue->expects($this->once())
+						->method('getLayoutPath')
+						->will($this->returnValue(
+								JPATH_BASE . '/tmpl/default.php'
+						));
+		$this->mock_glue->expects($this->once())
+						->method('sendHTML')
+						->will($this->returnValue($image));
+		
+    	ob_start();
+		$this->module->createOutput('default');
+    	$view_output = ob_get_contents();
+    	ob_end_clean();
+		$this->assertStringStartsWith('<div class="random-image">', $view_output);
+		$this->assertStringEndsWith("</div>\n", $view_output);
+		$this->assertTrue(!!strpos($view_output, $image));
 	}
 }
 ?>
