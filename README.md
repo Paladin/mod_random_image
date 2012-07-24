@@ -24,6 +24,12 @@ The premise is made clear by looking at the helper.php code: The object is insta
 
 The unfortunate reliance on static calls into JURI, JHTML, JString, and JText means we haven't completely broken the dependencies, but we've localized the untestable code. If/When Joomla itself becomes more testable, we can update the testing here.
 
+Until then, we've played a little game with the system, moving the static calls into a "glue" object. This maintains the integrity of the calls while working in Joomla itself, but allows us to sneak our own test methods in during testing, leaving Joomla completely out of the test, ensuring any bugs we find are of our own making.
+
+The last little touch is adding a specific test template, with the call to JHTML replaced with a method our mock cms glue mocks. That alows us to test the output of our view as well.
+
+I'll leave the selection of test cases for the remaining tests as an exercise for the reader.
+
 ## When will it happen?
 Dunno. Let's find out first if I've managed to think this through properly, then we'll worry about when. This is an early "proof-of-concept" pass at it. It'll get fleshed out with comments/suggestions received, and tests (of **course** there will be tests, that's part of the point, here, after all).
 
