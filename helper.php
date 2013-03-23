@@ -116,11 +116,8 @@ class modRandomImageHelper
 
 	public function getFolder($theFolder)
 	{ 
-		// if folder includes absolute path, remove
-		if ($this->cms->strpos($folder, JPATH_SITE) === 0) {
-			$folder= str_replace(JPATH_BASE, '', $folder);
-		}
 		$folder = $this->removeLiveSite($theFolder);
+		$folder = $this->makeRelativePath($folder,JPATH_SITE);
 		$folder = str_replace('\\', DIRECTORY_SEPARATOR, $folder);
 		$folder = str_replace('/', DIRECTORY_SEPARATOR, $folder);
 
@@ -172,6 +169,25 @@ class modRandomImageHelper
 			$folder = str_replace($LiveSite, '', $path);
 		}
 		
+		return $path;
+	 }
+	/**
+	 *	makeRelativePath
+	 *
+	 *	Makes the given path relative to another path, if possible.
+	 *
+	 *	@param	path	String	the path/uri to the folder
+	 *	@param	base	String	the path to base it off.
+	 *	@private
+	 *
+	 *	@return	string
+	 */
+	 private function makeRelativePath( $path, $base )
+	 {
+		// if folder includes absolute path, remove
+		if ($this->cms->strpos($path, $base) === 0) {
+			$path= str_replace($base, '', $path);
+		}
 		return $path;
 	 }
 }
