@@ -153,20 +153,33 @@ class modRandomImageHelperTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $actual);
 	}
 	/**
-	 *	testCreateOutput
+	 *	casesOutput
 	 */
-	public function testCreateOutput()
+	public function casesOutput()
 	{
-		$image = '<img src="/images/test.jpg" alt="test.jpg">';
+		return array(
+			array($this->folder, '<div class="random-image">', "</div>\n",
+				'<img src="/images/test.jpg" alt="test.jpg">', $this->once(), $this->once()),
+			array("Fred", "No", "Images", " Im", $this->never(), $this->never()),
+		);
+	}
+	/**
+	 *	testCreateOutput
+	 *
+	 *	@dataProvider	casesOutput
+	 */
+	public function testCreateOutput($folder, $startsWith, $endsWith, $image, $layoutCalls, $sendCalls)
+	{
+		$this->params->params['folder'] = $folder;
 		$this->mock_glue->expects($this->any())
 						->method('getTranslatedText')
 						->will($this->returnValue('No Images'));
-		$this->mock_glue->expects($this->once())
+		$this->mock_glue->expects($layoutCalls)
 						->method('getLayoutPath')
 						->will($this->returnValue(
 								JPATH_BASE . '/tmpl/default.php'
 						));
-		$this->mock_glue->expects($this->once())
+		$this->mock_glue->expects($sendCalls)
 						->method('sendHTML')
 						->will($this->returnValue($image));
 		
@@ -174,8 +187,8 @@ class modRandomImageHelperTest extends PHPUnit_Framework_TestCase
 		$this->module->createOutput('default');
     	$view_output = ob_get_contents();
     	ob_end_clean();
-		$this->assertStringStartsWith('<div class="random-image">', $view_output);
-		$this->assertStringEndsWith("</div>\n", $view_output);
+		$this->assertStringStartsWith($startsWith, $view_output);
+		$this->assertStringEndsWith($endsWith, $view_output);
 		$this->assertTrue(!!strpos($view_output, $image));
 	}
 }
