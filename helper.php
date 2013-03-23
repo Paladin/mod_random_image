@@ -116,18 +116,11 @@ class modRandomImageHelper
 
 	public function getFolder($theFolder)
 	{ 
-		$folder	= $theFolder;
-
-		$LiveSite	= $this->cms->getBaseURL();
-
-		// if folder includes livesite info, remove
-		if ($this->cms->strpos($folder, $LiveSite) === 0) {
-			$folder = str_replace($LiveSite, '', $folder);
-		}
 		// if folder includes absolute path, remove
 		if ($this->cms->strpos($folder, JPATH_SITE) === 0) {
 			$folder= str_replace(JPATH_BASE, '', $folder);
 		}
+		$folder = $this->removeLiveSite($theFolder);
 		$folder = str_replace('\\', DIRECTORY_SEPARATOR, $folder);
 		$folder = str_replace('/', DIRECTORY_SEPARATOR, $folder);
 
@@ -160,4 +153,25 @@ class modRandomImageHelper
 			require $this->cms->getLayoutPath($this->params->get('layout'));
 		}
 	}
+	/**
+	 *	removeLiveSite
+	 *
+	 *	Removes the current live site from the folder string, if present.
+	 *
+	 *	@param	path	String	the path/uri to the folder
+	 *	@private
+	 *
+	 *	@return	string
+	 */
+	 private function removeLiveSite( $path )
+	 {
+		$LiveSite	= $this->cms->getBaseURL();
+
+		// if folder includes livesite info, remove
+		if ($this->cms->strpos($path, $LiveSite) === 0) {
+			$folder = str_replace($LiveSite, '', $path);
+		}
+		
+		return $path;
+	 }
 }
