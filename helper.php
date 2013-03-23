@@ -2,13 +2,20 @@
 /**
  * @package		Joomla.Site
  * @subpackage	mod_random_image
+ *
  * @copyright	Copyright (C) 2005 - 2012 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-// no direct access
 defined('_JEXEC') or die;
 
+/**
+ * Helper for mod_random_image
+ *
+ * @package     Joomla.Site
+ * @subpackage  mod_random_image
+ * @since       1.5
+ */
 class ModRandomImageHelper
 {
 	/**
@@ -37,7 +44,15 @@ class ModRandomImageHelper
 		$this->params = $params;
 		$this->cms = $cms;
 	}
-	
+	/**
+	 * getRandomImage.
+	 *
+	 * @param	images	array	Array of image file names
+	 *
+	 * @return	image filename
+	 *
+	 * @since Unspecified Possible Future Version
+	 */
 	public function getRandomImage($images)
 	{
 		$width	= $this->params->get('width');
@@ -74,14 +89,30 @@ class ModRandomImageHelper
 
 		return $image;
 	}
-
+	/**
+	 * getImages
+	 *
+	 * @param	theFolder	string	path to image directory
+	 *
+	 * @return	array eligible images
+	 *
+	 * @since Unspecified Possible Future Version
+	 */
 	public function getImages($theFolder, $type)
 	{
 		$folder = $this->getFolder($theFolder);
 		$directory = JPATH_BASE . '/' . $folder;
 		return $this->getFilenameArray($directory, $type, $folder);
 	}
-
+	/**
+	 * getFolder
+	 *
+	 * @param	theFolder	string	path to image directory
+	 *
+	 * @return	string		path relative to site base of image directory
+	 *
+	 * @since Unspecified Possible Future Version
+	 */
 	public function getFolder($theFolder)
 	{ 
 		$folder = $this->removeLiveSite($theFolder);
