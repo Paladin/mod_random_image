@@ -113,11 +113,14 @@ class modRandomImageHelperTest extends PHPUnit_Framework_TestCase
 	public function testGetImages()
 	{
    		$images = $this->module->getImages($this->folder, $this->params->params['type'] = 'jpg');
-   		
-   		$this->assertEquals($images, array(
+   		$expected = array(
    			(object)array("name" => 'EQ.jpg', "folder" => 'images'),
    			(object)array("name" => 'hobok.jpg', "folder" => 'images'),
-   		));
+   		);
+   		sort($images);
+   		sort($expected);
+   		
+   		$this->assertEquals($expected, $images);
 	}
 	/**
 	 *	casesFolder
