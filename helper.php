@@ -79,9 +79,7 @@ class modRandomImageHelper
 	{
 		$folder = $this->getFolder($theFolder);
 		$directory = JPATH_BASE . '/' . $folder;
-		$files = $this->getFilenameArray($directory);
-
-		return $this->filterFilenameArray($files, $type, $folder);
+		return $this->getFilenameArray($directory, $type, $folder);
 	}
 
 	public function getFolder($theFolder)
@@ -163,57 +161,35 @@ class modRandomImageHelper
 	/**
 	 *	getFilenameArray
 	 *
-	 *	Gets the names of the files in the current directory.
+	 *	Gets the names of the files in the given directory.
 	 *
 	 *	@param	directory	String	the directory to look in
+	 *	@param	type		String	the regex string for image type matches
+	 *	@param	folder		String	path relative to site base 
 	 *	@private
 	 *
 	 *	@return	array
 	 */
-	 private function getFilenameArray( $directory )
+	 private function getFilenameArray( $directory, $type, $folder )
 	 {
-		$files	= array();
+		$images	= array();
 
-		if (!is_dir($directory)) { return $files; }
+		if (!is_dir($directory)) { return $images; }
 		
 		if ($handle = opendir($directory)) {
+			$i = 0;
 			while (false !== ($file = readdir($handle))) {
-				if ($file != '.' && $file != '..' && $file != 'CVS' &&
-						$file != 'index.html' && !is_dir($directory . '/' . $file)) {
-					$files[] = $file;
+				if ($file != '.' && $file != '..' &&
+						!is_dir($directory . '/' . $file) &&
+						preg_match('/'.$type.'/', $file)) {
+					$images[$i] = new stdClass;
+					$images[$i]->name	= $file;
+					$images[$i]->folder	= $folder;
+					$i++;
 				}
 			}
 		}
 		closedir($handle);
-		
-		return $files;
-	 }
-	/**
-	 *	filterFilenameArray
-	 *
-	 *	Checks an array for files of a given type.
-	 *
-	 *	@param	file	array	the array of file names
-	 *	@param	type	String	the regex string for filr type matches
-	 *	@param	folder	String	path relative to site base of the files
-	 *	@private
-	 *
-	 *	@return	array
-	 */
-	 private function filterFilenameArray( $files, $type, $folder )
-	 {
-		$images	= array();
-
-		$i = 0;
-		foreach ($files as $img)
-		{
-			if (preg_match('/'.$type.'/', $img)) {
-				$images[$i] = new stdClass;
-				$images[$i]->name	= $img;
-				$images[$i]->folder	= $folder;
-				$i++;
-			}
-		}
 		
 		return $images;
 	 }
