@@ -9,7 +9,7 @@
 // no direct access
 defined('_JEXEC') or die;
 
-class modRandomImageHelper
+class ModRandomImageHelper
 {
 	/**
 	 * @var	params	the params array for the module
