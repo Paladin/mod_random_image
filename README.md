@@ -1,6 +1,6 @@
 # mod_random_image
 
-[![Build Status](https://travis-ci.org/[Paladin]/[mod_random_image].png)](https://travis-ci.org/[Paladin]/[mod_random_image])
+[![Build Status](https://travis-ci.org/Paladin/mod_random_image.png)](https://travis-ci.org/Paladin/mod_random_image)
 
 ## What is it?
 It's a rework of the standard Joomla! Random Image module.
