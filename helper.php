@@ -78,40 +78,10 @@ class modRandomImageHelper
 	public function getImages($theFolder, $type)
 	{
 		$folder = $this->getFolder($theFolder);
-		$files	= array();
-		$images	= array();
+		$directory = JPATH_BASE . '/' . $folder;
+		$files = $this->getFilenameArray($directory);
 
-		$dir = JPATH_BASE . '/' . $folder;
-
-		// check if directory exists
-		if (is_dir($dir))
-		{
-			if ($handle = opendir($dir)) {
-				while (false !== ($file = readdir($handle))) {
-					if ($file != '.' && $file != '..' && $file != 'CVS' && $file != 'index.html') {
-						$files[] = $file;
-					}
-				}
-			}
-			closedir($handle);
-
-			$i = 0;
-			foreach ($files as $img)
-			{
-				if (!is_dir($dir . '/' . $img))
-				{
-					if (preg_match('/'.$type.'/', $img)) {
-						$images[$i] = new stdClass;
-
-						$images[$i]->name	= $img;
-						$images[$i]->folder	= $folder;
-						$i++;
-					}
-				}
-			}
-		}
-
-		return $images;
+		return $this->filterFilenameArray($files, $type, $folder);
 	}
 
 	public function getFolder($theFolder)
@@ -189,5 +159,62 @@ class modRandomImageHelper
 			$path= str_replace($base . '/', '', $path);
 		}
 		return $path;
+	 }
+	/**
+	 *	getFilenameArray
+	 *
+	 *	Gets the names of the files in the current directory.
+	 *
+	 *	@param	directory	String	the directory to look in
+	 *	@private
+	 *
+	 *	@return	array
+	 */
+	 private function getFilenameArray( $directory )
+	 {
+		$files	= array();
+
+		if (!is_dir($directory)) { return $files; }
+		
+		if ($handle = opendir($directory)) {
+			while (false !== ($file = readdir($handle))) {
+				if ($file != '.' && $file != '..' && $file != 'CVS' &&
+						$file != 'index.html' && !is_dir($directory . '/' . $file)) {
+					$files[] = $file;
+				}
+			}
+		}
+		closedir($handle);
+		
+		return $files;
+	 }
+	/**
+	 *	filterFilenameArray
+	 *
+	 *	Checks an array for files of a given type.
+	 *
+	 *	@param	file	array	the array of file names
+	 *	@param	type	String	the regex string for filr type matches
+	 *	@param	folder	String	path relative to site base of the files
+	 *	@private
+	 *
+	 *	@return	array
+	 */
+	 private function filterFilenameArray( $files, $type, $folder )
+	 {
+		$images	= array();
+
+		$i = 0;
+		foreach ($files as $img)
+		{
+			if (preg_match('/'.$type.'/', $img)) {
+				$images[$i] = new stdClass;
+				$images[$i]->name	= $img;
+				$images[$i]->folder	= $folder;
+				$i++;
+			}
+		}
+		
+		return $images;
 	 }
 }
