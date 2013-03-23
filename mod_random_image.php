@@ -13,5 +13,5 @@ defined('_JEXEC') or die;
 // Include the syndicate functions only once
 require_once dirname(__FILE__).'/helper.php';
 require_once dirname(__FILE__).'/JoomlaGlue.php';
-$randomImage = new ModRandomImageHelper($params, new JoomlaGlue);
+$randomImage = new ModRandomImageHelper($params, new ModRandomImageGlue);
 $randomImage->createOutput();

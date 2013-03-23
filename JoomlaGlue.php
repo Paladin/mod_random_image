@@ -7,13 +7,13 @@
  */
 
 /**
- *	JoomlaGlue
+ *	ModRandomImageGlue
  *
  *	This class abstracts all the calls into the Joomla API from the actual
  *	module code. This means the module can be run completely isolated from
  *	Joomla itself.
  */
-class JoomlaGlue
+class ModRandomImageGlue
 {
 	/**
 	 *	getBaseURL
