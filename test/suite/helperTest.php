@@ -120,19 +120,37 @@ class modRandomImageHelperTest extends PHPUnit_Framework_TestCase
    		));
 	}
 	/**
-	 *	testGetFolder
+	 *	casesFolder
+	 *
+	 *	Provides test cases for getFolder
 	 */
-	public function testGetFolder()
+	public function casesFolder()
+	{
+		return array(
+			array( "http://www.testingsite.com",
+					"http://www.testingsite.com" . JPATH_BASE . "/images",
+					0,
+					"images"
+			),
+			array( "", "images", null, "images" ),
+		);
+	}
+	/**
+	 *	testGetFolder
+	 *
+	 *	@dataProvider	casesFolder
+	 */
+	public function testGetFolder($site, $folder, $searchReturn, $expected)
 	{
 		$this->mock_glue->expects($this->once())
 						->method('getBaseURL')
-						->will($this->returnValue('http://www.testingsite.com'));
+						->will($this->returnValue($site));
 		$this->mock_glue->expects($this->exactly(2))
 						->method('strpos')
-						->will($this->returnValue($this->folder));
+						->will($this->returnValue($searchReturn));
 						
-		$actual = $this->module->getFolder($this->folder);
-		$this->assertEquals($actual, $this->folder);
+		$actual = $this->module->getFolder($folder);
+		$this->assertEquals($expected, $actual);
 	}
 	/**
 	 *	testCreateOutput

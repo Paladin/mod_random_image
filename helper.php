@@ -166,7 +166,7 @@ class modRandomImageHelper
 
 		// if folder includes livesite info, remove
 		if ($this->cms->strpos($path, $LiveSite) === 0) {
-			$folder = str_replace($LiveSite, '', $path);
+			$path = str_replace($LiveSite, '', $path);
 		}
 		
 		return $path;
@@ -186,7 +186,7 @@ class modRandomImageHelper
 	 {
 		// if folder includes absolute path, remove
 		if ($this->cms->strpos($path, $base) === 0) {
-			$path= str_replace($base, '', $path);
+			$path= str_replace($base . '/', '', $path);
 		}
 		return $path;
 	 }
