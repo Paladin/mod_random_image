@@ -64,7 +64,7 @@ class ModRandomImageHelper
 	 * @since Unspecified Possible Future Version
 	 */
 	public function __construct( $params, $juri="JURI", $jstring="JString",
-		$jtext="JText", $jhtml="JHTML", $self="self" )
+		$jtext="JText", $jhtml="JHTML", $self="JModuleHelper" )
 	{
 		$this->params = $params;
 		$this->juri = $juri;
