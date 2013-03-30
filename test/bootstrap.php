@@ -1,5 +1,7 @@
 <?php
-
 define('_JEXEC', 1);
-define('JPATH_BASE', __DIR__ . '/fixtures');
-define('JPATH_SITE', __DIR__ . '/fixtures');
+define('MODULE_ROOT', dirname(__DIR__));
+define('FIXTURES_ROOT', __DIR__ . '/fixtures');
+define('JPATH_BASE', FIXTURES_ROOT);
+define('JPATH_SITE', FIXTURES_ROOT);
+?>

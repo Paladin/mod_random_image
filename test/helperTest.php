@@ -5,8 +5,10 @@
  * @copyright	Copyright (C) 2005 - 2012 Open Source Matters, Inc. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
-include_once __DIR__ . '/../../helper.php';
-include_once __DIR__ . '/../fixtures/mockParams.php';
+include_once MODULE_ROOT . '/helper.php';
+include_once FIXTURES_ROOT . '/mockParams.php';
+include_once FIXTURES_ROOT . '/testglue.php';
+include_once FIXTURES_ROOT . '/testtemplateglue.php';
 /**
  *	modRandomImageHelperTest
  *
@@ -47,15 +49,9 @@ class modRandomImageHelperTest extends PHPUnit_Framework_TestCase
 		$this->params->params['moduleclass_sfx'] = null;
 		$this->params->params['layout'] = null;
 
-    	$this->mock_glue = $this->getMock('JoomlaGlue',
-    										array('getBaseUrl',
-													'strpos',
-													'getTranslatedText',
-													'getLayoutPath',
-													'sendHTML')
-			);
-    	
-    	$this->module = new modRandomImageHelper($this->params, $this->mock_glue);
+    	$this->module = new modRandomImageHelper($this->params, "ModRandomImageGlue",
+    		"ModRandomImageGlue", "ModRandomImageGlue", "ModRandomImageTemplateGlue",
+    		"ModRandomImageGlue");
     }
 	/**
 	 *	testCreatedModule
@@ -131,7 +127,7 @@ class modRandomImageHelperTest extends PHPUnit_Framework_TestCase
 	{
 		return array(
 			array( "http://www.testingsite.com",
-					"http://www.testingsite.com" . JPATH_BASE . "/images",
+					"http://www.testingsite.com" . FIXTURES_ROOT . "/images",
 					0,
 					"images"
 			),
@@ -145,14 +141,17 @@ class modRandomImageHelperTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testGetFolder($site, $folder, $searchReturn, $expected)
 	{
-		$this->mock_glue->expects($this->once())
-						->method('getBaseURL')
-						->will($this->returnValue($site));
-		$this->mock_glue->expects($this->exactly(2))
-						->method('strpos')
-						->will($this->returnValue($searchReturn));
-						
+		ModRandomImageGlue::$strposCalls = 0;
+		ModRandomImageGlue::$baseCalls = 0;
+		ModRandomImageGlue::$strposReturn = $searchReturn;
+		ModRandomImageGlue::$baseReturn = $site;
+		
 		$actual = $this->module->getFolder($folder);
+		
+		$this->assertEquals(1, ModRandomImageGlue::$baseCalls,
+			"Base was called incorrect number of times");
+		$this->assertEquals(2, ModRandomImageGlue::$strposCalls,
+			"strpos was called incorrect number of times");
 		$this->assertEquals($expected, $actual);
 	}
 	/**
@@ -162,8 +161,15 @@ class modRandomImageHelperTest extends PHPUnit_Framework_TestCase
 	{
 		return array(
 			array($this->folder, '<div class="random-image">', "</div>\n",
-				'<img src="/images/test.jpg" alt="test.jpg">', $this->once(), $this->once()),
-			array("Fred", "No", "Images", " Im", $this->never(), $this->never()),
+				'<img src="/images/test.jpg" alt="test.jpg">',
+				FIXTURES_ROOT . '/tmpl/default.php',
+				1, 1),
+			array($this->folder, '<div class="random-image">', "</div>\n",
+				'<img src="/images/test.jpg" alt="test.jpg">',
+				MODULE_ROOT . '/tmpl/default.php',
+				1, 1),
+			array("Fred", "No", "Images", " Im", FIXTURES_ROOT . '/tmpl/default.php',
+				0, 0),
 		);
 	}
 	/**
@@ -171,25 +177,24 @@ class modRandomImageHelperTest extends PHPUnit_Framework_TestCase
 	 *
 	 *	@dataProvider	casesOutput
 	 */
-	public function testCreateOutput($folder, $startsWith, $endsWith, $image, $layoutCalls, $sendCalls)
-	{
+	public function testCreateOutput($folder, $startsWith, $endsWith, $image, $layout,
+			$layoutCalls, $sendCalls) {
 		$this->params->params['folder'] = $folder;
-		$this->mock_glue->expects($this->any())
-						->method('getTranslatedText')
-						->will($this->returnValue('No Images'));
-		$this->mock_glue->expects($layoutCalls)
-						->method('getLayoutPath')
-						->will($this->returnValue(
-								JPATH_BASE . '/tmpl/default.php'
-						));
-		$this->mock_glue->expects($sendCalls)
-						->method('sendHTML')
-						->will($this->returnValue($image));
-		
+		ModRandomImageGlue::$getLayoutPathCalls = 0;
+		ModRandomImageTemplateGlue::$_Calls = 0;
+		ModRandomImageGlue::$getLayoutPathReturn = $layout;
+		ModRandomImageTemplateGlue::$_Return = $image;
+		ModRandomImageGlue::$_Return = "No Images";
+
     	ob_start();
 		$this->module->createOutput('default');
     	$view_output = ob_get_contents();
     	ob_end_clean();
+
+		$this->assertEquals($layoutCalls, ModRandomImageGlue::$getLayoutPathCalls,
+			"getLayoutPath was called incorrect number of times");
+		$this->assertEquals($layoutCalls, ModRandomImageTemplateGlue::$_Calls,
+			"sendHTML was called incorrect number of times");
 		$this->assertStringStartsWith($startsWith, $view_output);
 		$this->assertStringEndsWith($endsWith, $view_output);
 		$this->assertTrue(!!strpos($view_output, $image));
